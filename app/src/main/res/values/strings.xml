@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">shtopo</string>
+    <string name="main__button__sync_bookmarks">Sync</string>
+    <string name="main__label__api_base_url">API Base URL</string>
+    <string name="main__label__local_bookmarks">Bookmarks Queue</string>
+    <string name="main__label__local_bookmarks__with_count">Bookmarks Queue (%d)</string>
+    <string name="save_bookmark__label__saved">Saved!</string>
+    <string name="save_bookmark__label__saving">Saving…</string>
 </resources>
