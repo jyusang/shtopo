@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleInitEditApiBaseUrl() {
         CoroutineScope(Dispatchers.Default).launch {
-            val value = Utils.getConfig(db, ConfigName.API_BASE_URL)
+            val value = Utils.getConfig(db, ConfigName.API_ENDPOINT)
             updateEditApiBaseUrlAsReady(value)
         }
     }
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleUpdateApiBaseUrlConfig(value: String) {
         CoroutineScope(Dispatchers.Default).launch {
-            Utils.setConfig(db, ConfigName.API_BASE_URL, value)
+            Utils.setConfig(db, ConfigName.API_ENDPOINT, value)
         }
     }
 

@@ -16,7 +16,7 @@ data class Config(
 interface ConfigDao {
 
     @Query("SELECT * FROM configs WHERE name = :name")
-    fun getByName(name: String): Config
+    fun getByName(name: String): Config?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun set(config: Config)

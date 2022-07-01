@@ -6,22 +6,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 enum class ConfigName {
-    API_BASE_URL,
+    API_ENDPOINT,
 }
 
 interface BookmarkService {
 
     @FormUrlEncoded
-    @POST("/")
-    suspend fun saveBookmark(@Field("url") url: String): Any
+    @POST
+    suspend fun saveBookmark(@Url endpoint: String, @Field("url") url: String): Any
 }
 
 object Utils {
 
     fun getConfig(db: AppDatabase, name: ConfigName): String {
-        return db.configDao().getByName(name.name).value
+        return (db.configDao().getByName(name.name))?.value ?: ""
     }
 
     fun setConfig(db: AppDatabase, name: ConfigName, value: String) {
@@ -40,17 +41,17 @@ object Utils {
         db.bookmarkDao().delete(bookmark)
     }
 
-    suspend fun syncBookmark(service: BookmarkService, url: String) {
-        val res = service.saveBookmark(url)
+    suspend fun syncBookmark(service: BookmarkService, endpoint: String, url: String) {
+        service.saveBookmark(endpoint, url)
     }
 
     suspend fun syncBookmarks(db: AppDatabase) {
-        val apiBaseUrl = getConfig(db, ConfigName.API_BASE_URL)
-        val service = buildBookmarkService(apiBaseUrl)
+        val apiEndpoint = getConfig(db, ConfigName.API_ENDPOINT)
+        val service = buildBookmarkService()
         val bookmarks = listBookmarks(db)
         for (bookmark in bookmarks) {
             try {
-                syncBookmark(service, bookmark.url)
+                syncBookmark(service, apiEndpoint, bookmark.url)
             } catch (e: Exception) {
                 Log.e(null, "Failed to sync bookmark '${bookmark.url}': ${e}")
                 Log.i(null, "Break and wait for next sync")
@@ -60,9 +61,9 @@ object Utils {
         }
     }
 
-    private fun buildBookmarkService(baseUrl: String): BookmarkService {
+    private fun buildBookmarkService(): BookmarkService {
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl("http://0.0.0.0/") // Dummy
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         return retrofit.create(BookmarkService::class.java)
